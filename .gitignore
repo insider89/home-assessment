@@ -1,0 +1,9 @@
+.terraform
+.terraform/*
+terraform.tfstate
+*.terrahelpbkp
+terraform.tfstate*.backup
+terraform.tfvars.terrahelpbkp
+.DS_Store
+.state
+.state/*

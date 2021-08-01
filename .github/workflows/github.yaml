@@ -1,0 +1,27 @@
+name: "Helm workflow"
+on:
+  push:
+    branches:
+      - main
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out Repo
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials from account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - shell: bash
+        run: |
+          helm plugin install https://github.com/hypnoglow/helm-s3.git
+          helm s3 init s3://home-helm-repository/stable/home-assessment/
+          helm repo add home-assessment s3://home-helm-repository/stable/home-assessment
+          helm package part1/helm-charts/home-assessment/
+          HELM_S3_MODE=3 helm s3 push home-assessment-0.1.0.tgz home-assessment
+          helm search repo home-assessment
